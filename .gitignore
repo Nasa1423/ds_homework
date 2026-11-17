@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+history.db
+history.db-*
+application.log
+*.obj
+*.eep.hex
+*.lst
+*.map

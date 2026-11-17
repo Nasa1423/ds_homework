@@ -1,0 +1,12 @@
+@startuml
+title Увеличение числа — компоненты
+component "Клиент\nclient.py" as Client
+component "Веб-сервер\nwebserver.py" as Web
+component "Приложение\napplication.py\nоднопоточный HTTPServer" as App
+database "Локальный файл SQLite\nhistory(number, outcome)" as DB
+artifact "application.log" as Log
+Client --> Web : HTTP POST /increment
+Web --> App : HTTP POST /increment
+App --> DB : проверка и запись результата\nв одной транзакции
+App --> Log : бизнес-ошибки
+@enduml

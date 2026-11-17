@@ -1,0 +1,29 @@
+@startuml
+title Увеличение числа — запрос
+actor "Пользователь" as User
+participant "Клиент" as Client
+participant "Веб-сервер" as Web
+participant "Приложение\n(однопоточное)" as App
+database "SQLite\nhistory" as DB
+collections "application.log" as Log
+User -> Client : число
+Client -> Web : POST /increment
+Web -> App : POST /increment
+alt некорректный ввод
+  App --> Web : 400 ошибка ввода
+else корректный ввод
+  App -> DB : проверить историю и записать результат\n(транзакция)
+  DB --> App : транзакция завершена
+  alt дубликат
+    App -> Log : записать ошибку
+    App --> Web : 409 дубликат
+  else предшественник
+    App -> Log : записать ошибку
+    App --> Web : 409 предшественник
+  else успех
+    App --> Web : 200 число + 1
+  end
+end
+Web --> Client : ответ
+Client --> User : показать JSON
+@enduml
